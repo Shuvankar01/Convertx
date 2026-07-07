@@ -1,0 +1,6 @@
+/* Small polish on top of Tailwind. */
+:root { color-scheme: light dark; }
+html { -webkit-font-smoothing: antialiased; }
+::selection { background-color: rgba(59,130,246,0.25); }
+[hx-indicator] { transition: opacity .15s ease; }
+.htmx-request .htmx-indicator { opacity: 1; }

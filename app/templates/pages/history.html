@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}History — {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3">
+  <div>
+    <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Activity</p>
+    <h1 class="text-3xl font-bold tracking-tight">Conversion History</h1>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Every conversion is saved locally in SQLite.</p>
+  </div>
+  {% if entries %}
+    <button hx-delete="/history" hx-target="#history-list" hx-swap="outerHTML"
+            hx-confirm="Clear all conversion history?"
+            class="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-500/30 dark:bg-slate-900 dark:text-rose-300 dark:hover:bg-rose-500/10">
+      Clear all
+    </button>
+  {% endif %}
+</div>
+
+<div class="mt-6">
+  {% include "partials/history_list.html" %}
+</div>
+{% endblock %}

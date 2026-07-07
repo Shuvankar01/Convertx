@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ APP_NAME }} — {{ TAGLINE }}{% endblock %}</title>
+  <meta name="description" content="{{ TAGLINE }}" />
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml" />
+
+  <!-- Tailwind CSS via Play CDN (no Node build required). -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',
+              400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',
+              800:'#1e40af',900:'#1e3a8a',950:'#172554'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter','ui-sans-serif','system-ui','sans-serif'],
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(59,130,246,0.15), 0 10px 30px -10px rgba(59,130,246,0.35)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- HTMX for dynamic partial updates -->
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/app.css" />
+  <script>
+    // Apply saved theme before paint to avoid flash.
+    (function () {
+      try {
+        var t = localStorage.getItem('convertx-theme') || '{{ settings.theme if settings else "system" }}';
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (t === 'system' && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased">
+  {% include "partials/navbar.html" %}
+
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/footer.html" %}
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

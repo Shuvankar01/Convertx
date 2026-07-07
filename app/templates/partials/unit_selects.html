@@ -1,0 +1,23 @@
+<div class="grid gap-3 sm:grid-cols-2">
+  {% for u in units %}
+    {% if u.key == from_unit %}
+      <input type="hidden" name="_placeholder" value="1" />
+    {% endif %}
+  {% endfor %}
+  <label class="block">
+    <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">From</span>
+    <select name="from_unit" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+      {% for u in units %}
+        <option value="{{ u.key }}" {% if u.key == from_unit %}selected{% endif %}>{{ u.label }} ({{ u.symbol }})</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="block">
+    <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">To</span>
+    <select name="to_unit" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+      {% for u in units %}
+        <option value="{{ u.key }}" {% if u.key == to_unit %}selected{% endif %}>{{ u.label }} ({{ u.symbol }})</option>
+      {% endfor %}
+    </select>
+  </label>
+</div>

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Converter — {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="grid gap-6 lg:grid-cols-5">
+  <!-- Workspace -->
+  <section class="lg:col-span-3">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Converter Workspace</p>
+          <h1 class="text-2xl font-bold tracking-tight">{{ category.label }}</h1>
+        </div>
+        <span class="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">
+          {{ units | length }} units
+        </span>
+      </div>
+
+      <form
+        id="convert-form"
+        class="mt-6 space-y-5"
+        hx-post="/converter/convert"
+        hx-target="#result-region"
+        hx-swap="innerHTML"
+        hx-trigger="submit, change from:#category, change from:select[name=from_unit], change from:select[name=to_unit], change from:select[name=precision], input delay:400ms from:input[name=value]"
+      >
+        <div>
+          <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Category</label>
+          <select id="category" name="category"
+                  hx-get="/converter/units" hx-target="#unit-selects" hx-swap="innerHTML"
+                  hx-trigger="change"
+                  hx-include="[name=category]"
+                  onchange="const url=new URL(window.location);url.searchParams.set('category', this.value);history.replaceState(null,'',url)"
+                  class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+            {% for c in ALL_CATEGORIES() %}
+              <option value="{{ c.value }}" {% if c == category %}selected{% endif %}>{{ c.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Value</label>
+          <div class="flex gap-2">
+            <input type="text" name="value" value="{{ value }}" inputmode="decimal" autocomplete="off"
+                   class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-lg font-semibold focus:border-brand-500 focus:ring-brand-500"
+                   placeholder="Enter a number" />
+            <button type="button" onclick="clearValue()" class="rounded-lg border border-slate-200 px-3 text-sm font-medium hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">Clear</button>
+          </div>
+        </div>
+
+        <div id="unit-selects">
+          {% include "partials/unit_selects.html" %}
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" onclick="swapUnits()" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
+            Swap
+          </button>
+          <label class="inline-flex items-center gap-2 text-sm">
+            <span class="text-slate-500 dark:text-slate-400">Precision</span>
+            <select name="precision" class="rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+              {% for p in ['2','4','6','auto'] %}
+                <option value="{{ p }}" {% if p == precision %}selected{% endif %}>{{ p }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <button type="submit" class="ml-auto inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition">
+            Convert
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="result-region" class="mt-6"
+         hx-get="" hx-trigger="load once"
+         hx-swap="innerHTML">
+      <div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-8 text-center text-sm text-slate-500 dark:text-slate-400">
+        Enter a value to see the result here.
+      </div>
+    </div>
+  </section>
+
+  <!-- Sidebar -->
+  <aside class="lg:col-span-2 space-y-6">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+      <h2 class="text-sm font-semibold">Quick presets</h2>
+      <div class="mt-3 grid gap-2">
+        {% for p in QUICK_PRESETS %}
+          <a href="/converter?category={{ p.category.value }}&from_unit={{ p.from_unit }}&to_unit={{ p.to_unit }}&value=1"
+             class="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm hover:border-brand-300 hover:bg-brand-50 dark:border-slate-800 dark:hover:border-brand-500/40 dark:hover:bg-brand-500/10">
+            <span class="truncate">
+              <span class="text-xs text-slate-400 mr-1">{{ p.category.label }}</span>
+              <span class="font-semibold">{{ p.label }}</span>
+            </span>
+            <span class="text-slate-400">→</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+      <h2 class="text-sm font-semibold">Tips</h2>
+      <ul class="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+        <li>• Values update automatically as you type.</li>
+        <li>• Use <span class="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-xs">Swap</span> to invert the conversion.</li>
+        <li>• Precision <span class="font-mono text-xs">auto</span> hides trailing zeros.</li>
+        <li>• Star a result to save the pair to Favorites.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<script>
+  // Trigger an initial conversion once HTMX is ready.
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.htmx) htmx.trigger('#convert-form', 'submit');
+  });
+</script>
+{% endblock %}

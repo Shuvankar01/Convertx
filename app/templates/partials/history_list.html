@@ -1,0 +1,29 @@
+<div id="history-list" class="divide-y divide-slate-200 dark:divide-slate-800 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+  {% if entries %}
+    {% for e in entries %}
+      <div id="history-{{ e.id }}" class="flex flex-wrap items-center justify-between gap-3 p-4">
+        <div class="min-w-0">
+          <p class="text-xs uppercase tracking-wider text-slate-400">{{ e.category.replace('_', ' ').title() }}</p>
+          <p class="mt-0.5 font-medium truncate">
+            {{ e.input_value | fmt(e.precision) }} {{ e.from_unit }}
+            <span class="mx-1 text-slate-400">→</span>
+            {{ e.result_value | fmt(e.precision) }} {{ e.to_unit }}
+          </p>
+          <p class="text-xs text-slate-400">{{ e.created_at.strftime('%b %d, %Y · %H:%M') }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="/converter?category={{ e.category }}&from_unit={{ e.from_unit }}&to_unit={{ e.to_unit }}&value={{ e.input_value }}"
+             class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+             Reuse
+          </a>
+          <button hx-delete="/history/{{ e.id }}" hx-target="#history-{{ e.id }}" hx-swap="outerHTML"
+                  class="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-500/30 dark:text-rose-300 dark:hover:bg-rose-500/10">
+             Delete
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    {% include "partials/history_empty.html" %}
+  {% endif %}
+</div>

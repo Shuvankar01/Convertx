@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}About — {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-3xl">
+  <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">About</p>
+  <h1 class="text-3xl font-bold tracking-tight">About {{ APP_NAME }}</h1>
+  <p class="mt-3 text-lg text-slate-600 dark:text-slate-300">{{ TAGLINE }}</p>
+
+  <div class="prose prose-slate dark:prose-invert mt-6 max-w-none">
+    <h2>How the engine works</h2>
+    <p>
+      Each conversion category defines a base unit and a mapping of unit
+      factors relative to that base. A conversion is a two-step operation:
+      normalize the value into the base unit, then divide by the target
+      unit's factor. Temperature and fuel economy use dedicated formulas
+      because they aren't purely linear.
+    </p>
+    <h2>Conventions</h2>
+    <ul>
+      <li>Data storage uses the <strong>decimal (SI) convention</strong>: 1 KB = 1,000 B.</li>
+      <li>Time uses the Julian year (365.25 days) and average Gregorian month.</li>
+      <li>Fluid volumes (cup, pint, quart, gallon) use US customary values.</li>
+    </ul>
+    <h2>Tech stack</h2>
+    <p>
+      FastAPI, Jinja2 templates, HTMX, Tailwind CSS, SQLAlchemy, and Pydantic.
+      The codebase is intentionally modular — converters, services,
+      repositories, and routers are split into small focused modules.
+    </p>
+  </div>
+</div>
+{% endblock %}

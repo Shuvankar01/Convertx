@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Settings — {{ APP_NAME }}{% endblock %}
+{% block content %}
+<div>
+  <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Preferences</p>
+  <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
+  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Personalize ConvertX. Changes are saved to your local database.</p>
+</div>
+
+<form class="mt-6 grid gap-6 lg:grid-cols-2"
+      hx-post="/settings" hx-target="#settings-flash" hx-swap="innerHTML">
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+    <h2 class="text-base font-semibold">Appearance</h2>
+    <div class="mt-4 space-y-4">
+      <label class="block">
+        <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Theme</span>
+        <select name="theme" id="theme-select" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+          {% for t in ['system','light','dark'] %}
+            <option value="{{ t }}" {% if t == settings.theme %}selected{% endif %}>{{ t.title() }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+    <h2 class="text-base font-semibold">Converter defaults</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <label class="block">
+        <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Default precision</span>
+        <select name="precision" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+          {% for p in ['2','4','6','auto'] %}
+            <option value="{{ p }}" {% if p == settings.precision %}selected{% endif %}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="block">
+        <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Default category</span>
+        <select name="default_category" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
+          {% for c in categories %}
+            <option value="{{ c.value }}" {% if c.value == settings.default_category %}selected{% endif %}>{{ c.label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900 lg:col-span-2">
+    <h2 class="text-base font-semibold">Behavior</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-3">
+      {% set toggles = [
+        ('remember_last_conversion', 'Remember last conversion', settings.remember_last_conversion),
+        ('show_comparison_panel', 'Show comparison panel', settings.show_comparison_panel),
+        ('save_history', 'Save conversion history', settings.save_history),
+      ] %}
+      {% for name, label, val in toggles %}
+        <label class="flex items-start gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+          <input type="checkbox" name="{{ name }}" value="1" {% if val %}checked{% endif %}
+                 class="mt-1 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+          <span>
+            <span class="block font-medium">{{ label }}</span>
+          </span>
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="lg:col-span-2 flex flex-wrap items-center gap-3">
+    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+      Save changes
+    </button>
+    <button type="button"
+            hx-post="/settings/clear-data" hx-target="#settings-flash" hx-swap="innerHTML"
+            hx-confirm="This will clear your conversion history. Continue?"
+            class="rounded-lg border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:border-rose-500/30 dark:text-rose-300 dark:hover:bg-rose-500/10">
+      Clear saved data
+    </button>
+    <div id="settings-flash" class="ml-auto"></div>
+  </div>
+</form>
+{% endblock %}

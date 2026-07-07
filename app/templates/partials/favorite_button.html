@@ -1,0 +1,11 @@
+<button
+  type="button"
+  hx-post="/favorites/toggle"
+  hx-vals='{"category": "{{ category }}", "from_unit": "{{ from_unit }}", "to_unit": "{{ to_unit }}"}'
+  hx-swap="outerHTML"
+  class="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition
+         {% if is_favorite %}border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300
+         {% else %}border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800{% endif %}">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if is_favorite %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  {% if is_favorite %}Favorited{% else %}Add to favorites{% endif %}
+</button>
