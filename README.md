@@ -384,3 +384,12 @@ Built a production-style unit conversion web application using **FastAPI, Jinja2
 # License
 
 This project is licensed under the **MIT License**.
+
+## Internship information
+
+| Field      | Value                         |
+| ---------- | ----------------------------- |
+| **Intern** | Shuvankar Sahoo               |
+| **ID**     | CITS2865                      |
+| **Duration** | 6 weeks                     |
+| **Project**  | Smart Unit Converter        |
