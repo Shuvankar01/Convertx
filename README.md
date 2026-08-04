@@ -19,13 +19,13 @@ This project demonstrates how to build a clean, modular backend-driven web app w
 ![Conversion Unit](app/docs/screenshots/conversion-unit.png)
 
 ### History Tracking
-![ConvertX History Page](docs/screenshots/history.png)
+![ConvertX History Page](app/docs/screenshots/history.png)
 
 ### Favorites
-![ConvertX Favorites Page](docs/screenshots/favorites.png)
+![ConvertX Favorites Page](app/docs/screenshots/favorites.png)
 
 ### Settings
-![ConvertX Settings Page](docs/screenshots/settings.png)
+![ConvertX Settings Page](app/docs/screenshots/settings.png)
 
 ---
 
