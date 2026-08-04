@@ -10,13 +10,13 @@ This project demonstrates how to build a clean, modular backend-driven web app w
 ## Screenshots
 
 ### Dashboard
-![ConvertX Dashboard](docs/screenshots/dashboard.png)
+![ConvertX Dashboard](app/docs/screenshots/dashboard.png)
 
 ### Converter Workspace
-![ConvertX Converter Workspace](docs/screenshots/converter-workspace.png)
+![ConvertX Converter Workspace](app/docs/screenshots/converter-workspace.png)
 
 ### Conversion Unit
-![Conversion Unit](docs/screenshots/conversion-unit.png)
+![Conversion Unit](app/docs/screenshots/conversion-unit.png)
 
 ### History Tracking
 ![ConvertX History Page](docs/screenshots/history.png)
