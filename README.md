@@ -89,7 +89,7 @@ This project demonstrates how to build a clean, modular backend-driven web app w
 # Tech Stack
 
 ## Backend
-- **Python 3.12+**
+- **Python 3.12+** (pinned to **3.14** via `.python-version`, matching local development)
 - **FastAPI**
 - **Pydantic v2**
 - **SQLAlchemy 2.x**
@@ -176,6 +176,7 @@ ConvertX/
 │   ├── dependencies.py
 │   │
 │   ├── core/
+│   │   ├── constants.py
 │   │   ├── enums.py
 │   │   ├── exceptions.py
 │   │   └── utils.py
@@ -189,6 +190,7 @@ ConvertX/
 │   │   └── ...
 │   │
 │   ├── db/
+│   │   ├── base.py
 │   │   ├── session.py
 │   │   └── models/
 │   │
@@ -197,6 +199,7 @@ ConvertX/
 │   ├── services/
 │   │
 │   ├── routers/
+│   │   ├── _templating.py
 │   │   ├── converter.py
 │   │   ├── favorites.py
 │   │   ├── history.py
@@ -204,14 +207,29 @@ ConvertX/
 │   │   └── settings.py
 │   │
 │   ├── templates/
-│   │   ├── base templates
-│   │   ├── pages
-│   │   └── partials
+│   │   ├── base.html
+│   │   ├── pages/
+│   │   └── partials/
 │   │
-│   └── static/
+│   ├── static/
+│   │   ├── css/app.css
+│   │   ├── js/app.js
+│   │   └── icons/favicon.svg
+│   │
+│   ├── docs/screenshots/
+│   │
+│   └── tests/
+│       ├── conftest.py
+│       ├── test_conversion_service.py
+│       ├── test_deployment_config.py
+│       ├── test_fuel_economy.py
+│       ├── test_history_and_settings.py
+│       ├── test_routes.py
+│       └── test_temperature_converter.py
 │
-├── tests/
 ├── requirements.txt
+├── pytest.ini
+├── .python-version
 ├── README.md
 └── .gitignore
 ```
@@ -314,6 +332,11 @@ pytest -v
 
 By default, ConvertX uses **SQLite** for local development.
 
+By default the database file is written to `convertx.db` in the repository root.
+If that directory is not writable — which is the case on read-only serverless
+filesystems such as Vercel Functions — `app/config.py` automatically falls back
+to a SQLite file inside the system temp directory so the app can still start.
+
 The project is structured so it can be migrated to **PostgreSQL** later with minimal architectural changes if the database URL and driver are updated appropriately.
 
 Example PostgreSQL connection string:
@@ -327,6 +350,142 @@ Install PostgreSQL driver if needed:
 ```bash
 pip install "psycopg[binary]"
 ```
+
+> **Read this before deploying:** SQLite is fine for local development, but it is
+> **not durable persistent storage on Vercel**. See
+> [Deployment — Vercel](#deployment--vercel) below.
+
+---
+
+# Deployment — Vercel
+
+ConvertX is a plain **FastAPI** application that exports an `app` instance from
+`app/main.py`. Vercel supports FastAPI with **zero configuration**, so there is
+no `vercel.json`, no `/api` directory, and no rewrite rules to add.
+
+Vercel detects this project automatically because:
+
+- `requirements.txt` declares `fastapi`, which triggers the Python framework preset
+- the ASGI entrypoint `app/main.py` exports a variable named `app`
+- the Python version is pinned in `.python-version`
+
+## Steps
+
+1. **Push the repository to GitHub.**
+
+   ```bash
+   git add -A
+   git commit -m "Prepare ConvertX for first Vercel deployment"
+   git push origin main
+   ```
+
+2. **Import the repository into Vercel.**
+   Go to [vercel.com/new](https://vercel.com/new) and choose **Add New… → Project**
+   → import the GitHub repository.
+
+3. **Select the repository root as the project root.**
+   Leave the root directory as `/` (the folder containing `requirements.txt` and
+   `app/`). Do **not** set an output directory or build command.
+
+4. **Allow Vercel to detect the FastAPI application.**
+   The **Framework Preset** should show *FastAPI* and the entrypoint should
+   resolve to `app/main.py`. If Vercel ever fails to detect it, set the
+   entrypoint explicitly in `pyproject.toml`:
+
+   ```toml
+   [tool.vercel]
+   entrypoint = "app.main:app"
+   ```
+
+   You should not need this — it is only a fallback.
+
+5. **Configure environment variables.**
+   ConvertX has **no required environment variables** and ships with working
+   defaults. Add `CONVERTX_DATABASE_URL` only if you want to point at a
+   different database. See [Environment Variables](#environment-variables).
+
+6. **Deploy.**
+   Click **Deploy**. Vercel installs `requirements.txt`, detects the FastAPI
+   framework, and builds a single Vercel Function from `app/main.py`.
+
+7. **Open the generated deployment URL** (for example
+   `https://convertx-xxxx.vercel.app`).
+
+8. **Test the major routes:**
+
+   | Route | What to check |
+   |---|---|
+   | `/` | Dashboard renders, category cards load |
+   | `/converter` | Pick a category, submit the form, result appears **without a full page reload** (HTMX) |
+   | `/supported-units` | All 15 categories and their units are listed |
+   | `/history` | The conversion you just ran is listed |
+   | `/favorites` | Star a result, then confirm it appears here |
+   | `/settings` | Change precision/theme, reload and confirm it persisted |
+   | `/about` | Renders |
+
+   Also confirm the browser console is free of `404`s for `/static/css/app.css`,
+   `/static/js/app.js` and `/static/icons/favicon.svg`.
+
+## Static files on Vercel
+
+`app/main.py` mounts `app/static/` at `/static` with Starlette's `StaticFiles`.
+Vercel detects `StaticFiles` mounts at build time, copies the directory to its
+CDN output, and serves those assets from the edge. No `public/` directory and no
+extra configuration is required.
+
+## Environment Variables
+
+All settings are read from the environment with the `CONVERTX_` prefix. **None
+are required** — ConvertX boots with built-in defaults.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `CONVERTX_DATABASE_URL` | local `convertx.db` (temp dir fallback) | SQLAlchemy database URL |
+| `CONVERTX_APP_NAME` | `ConvertX` | Application name shown in templates |
+| `CONVERTX_TAGLINE` | *(see `app/config.py`)* | Tagline shown on the dashboard and About page |
+| `CONVERTX_MAX_HISTORY_ITEMS` | `200` | Maximum retained history rows |
+| `CONVERTX_DEFAULT_PRECISION` | `4` | Fallback precision setting |
+
+Do not set `CONVERTX_TEMPLATES_DIR` or `CONVERTX_STATIC_DIR` on Vercel: the
+defaults are absolute paths inside the deployed bundle, and overriding them
+breaks template rendering and static-file serving.
+
+## SQLite persistence on Vercel — important limitation
+
+**SQLite is suitable for local development, but it must not be treated as
+durable persistent storage for a production Vercel deployment.**
+
+Vercel Functions run on an ephemeral filesystem. If the project directory is
+read-only, ConvertX falls back to writing SQLite into the system temp
+directory. What that means in practice:
+
+- **History, favorites and settings will not survive.** Any redeploy, or simply
+  waiting for an idle instance to be recycled and replaced, discards them and
+  starts from a fresh, empty database.
+- **Data is not shared between instances.** If several instances serve requests
+  at once, each has its own database file, so one visitor cannot see another
+  visitor's history, and updates may appear to be lost.
+- **Data is not shared between deployments.** A new preview or production
+  deployment starts empty.
+- This is acceptable for a demo or first deployment, where conversions work
+  normally for the life of a warm instance. It is not acceptable for real user
+  data.
+
+To get durable storage, introduce **PostgreSQL** (or another external, managed
+datastore such as Neon or Supabase) in a later phase and point
+`CONVERTX_DATABASE_URL` at it. Nothing in the schema, repositories or services
+needs to change — see [Future Improvements](#future-improvements).
+
+## Deploying from the Vercel CLI instead
+
+```bash
+npm i -g vercel
+vercel            # preview deployment
+vercel --prod     # production deployment
+```
+
+Use `vercel dev` to run the app locally against Vercel's build configuration
+(requires CLI 48.1.8 or newer).
 
 ---
 
@@ -351,7 +510,9 @@ Possible future enhancements include:
 - exportable conversion history
 - REST API endpoints for external programmatic usage
 - Dockerized deployment setup
-- PostgreSQL production configuration
+- **PostgreSQL production configuration** (required for durable history,
+  favorites and settings on Vercel — see
+  [Deployment — Vercel](#deployment--vercel))
 - search and fuzzy matching for units
 - usage analytics dashboard
 - advanced presets and saved conversion profiles
@@ -367,6 +528,12 @@ The main local development command is:
 
 ```bash
 uvicorn app.main:app --reload
+```
+
+To exercise a production-like configuration locally:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 This project is **not intended to be run as a standalone Vite/TanStack frontend app**.  
