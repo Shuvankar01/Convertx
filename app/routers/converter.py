@@ -60,6 +60,12 @@ def convert(
         converter=get_converter(cat),
         is_favorite=is_fav,
         show_comparison=settings.show_comparison_panel,
+        # Required by the favorite_button.html include inside result_card.html.
+        # Without these the button renders blank hx-vals and POST /favorites/toggle
+        # fails required-Form validation with 422.
+        category=cat.value,
+        from_unit=from_unit,
+        to_unit=to_unit,
     )
 
 
