@@ -39,6 +39,11 @@ dist/
 pip-wheel-metadata/
 
 # =========================
+# Vercel CLI local state
+# =========================
+.vercel/
+
+# =========================
 # Database / local app state
 # =========================
 *.db
