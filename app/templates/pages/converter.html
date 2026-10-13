@@ -71,9 +71,10 @@
       </form>
     </div>
 
-    <div id="result-region" class="mt-6"
-         hx-get="" hx-trigger="load once"
-         hx-swap="innerHTML">
+    <!-- Result region. Purely an HTMX target: the initial render comes from the
+         DOMContentLoaded submit below. Do NOT add hx-get here — an empty
+         hx-get makes htmx request the current URL and inject the whole page. -->
+    <div id="result-region" class="mt-6">
       <div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-8 text-center text-sm text-slate-500 dark:text-slate-400">
         Enter a value to see the result here.
       </div>
