@@ -1,11 +1,17 @@
 <div class="space-y-4">
   <!-- Main result card -->
   <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-brand-50/50 p-6 shadow-glow dark:border-slate-800 dark:from-slate-900 dark:to-brand-950/40">
-    <div class="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-brand-400/20 blur-3xl"></div>
+    <div class="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-brand-400/20 blur-3xl"></div>
     <div class="relative">
-      <p class="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300">Result</p>
-      <div class="mt-1 flex flex-wrap items-baseline gap-3">
-        <p class="text-4xl sm:text-5xl font-extrabold tracking-tight break-all" id="result-value">{{ result.formatted }}</p>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <p class="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300">Result</p>
+        <span class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white/70 px-2.5 py-0.5 text-xs font-medium text-slate-500 backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h6"/></svg>
+          {% if result.precision == 'auto' %}Precision: Auto{% else %}Precision: {{ result.precision }} decimals{% endif %}
+        </span>
+      </div>
+      <div class="mt-2 flex flex-wrap items-baseline gap-3">
+        <p class="break-all font-display text-4xl font-extrabold tracking-tight sm:text-5xl" id="result-value">{{ result.formatted }}</p>
         <p class="text-lg font-medium text-slate-500 dark:text-slate-400">{{ converter.symbol_for(result.to_unit) }}</p>
       </div>
       <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
@@ -14,7 +20,7 @@
       </p>
       <div class="mt-5 flex flex-wrap gap-2">
         <button type="button" onclick="copyResult()"
-                class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
           Copy
         </button>
@@ -40,9 +46,9 @@
     </div>
     <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {% for c in result.comparisons %}
-        <div class="rounded-xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+        <div class="rounded-xl border border-slate-100 bg-slate-50 p-3 transition hover:border-brand-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-brand-500/30">
           <p class="text-xs text-slate-500 dark:text-slate-400">{{ converter.label_for(c.unit) }}</p>
-          <p class="mt-0.5 truncate font-semibold">{{ c.formatted }} <span class="text-slate-400 font-normal">{{ converter.symbol_for(c.unit) }}</span></p>
+          <p class="mt-0.5 truncate font-semibold">{{ c.formatted }} <span class="font-normal text-slate-400">{{ converter.symbol_for(c.unit) }}</span></p>
         </div>
       {% endfor %}
     </div>

@@ -1,23 +1,29 @@
 <div class="grid gap-3 sm:grid-cols-2">
-  {% for u in units %}
-    {% if u.key == from_unit %}
-      <input type="hidden" name="_placeholder" value="1" />
-    {% endif %}
-  {% endfor %}
-  <label class="block">
-    <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">From</span>
+  <div class="block" data-unit-field>
+    <span class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">From</span>
+    <div class="relative mb-1.5">
+      <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" data-unit-search placeholder="Search units…" autocomplete="off" spellcheck="false"
+             class="w-full rounded-lg border-slate-200 py-2 pl-9 pr-3 text-sm placeholder:text-slate-400 focus:border-brand-500 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-900" />
+    </div>
     <select name="from_unit" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
       {% for u in units %}
         <option value="{{ u.key }}" {% if u.key == from_unit %}selected{% endif %}>{{ u.label }} ({{ u.symbol }})</option>
       {% endfor %}
     </select>
-  </label>
-  <label class="block">
-    <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">To</span>
+  </div>
+
+  <div class="block" data-unit-field>
+    <span class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">To</span>
+    <div class="relative mb-1.5">
+      <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" data-unit-search placeholder="Search units…" autocomplete="off" spellcheck="false"
+             class="w-full rounded-lg border-slate-200 py-2 pl-9 pr-3 text-sm placeholder:text-slate-400 focus:border-brand-500 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-900" />
+    </div>
     <select name="to_unit" class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:border-brand-500 focus:ring-brand-500">
       {% for u in units %}
         <option value="{{ u.key }}" {% if u.key == to_unit %}selected{% endif %}>{{ u.label }} ({{ u.symbol }})</option>
       {% endfor %}
     </select>
-  </label>
+  </div>
 </div>
