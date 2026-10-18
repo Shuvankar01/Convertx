@@ -4,8 +4,8 @@
 <div class="flex flex-wrap items-end justify-between gap-3">
   <div>
     <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Activity</p>
-    <h1 class="text-3xl font-bold tracking-tight">Conversion History</h1>
-    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Every conversion is saved locally in SQLite.</p>
+    <h1 class="font-display text-3xl font-bold tracking-tight">Conversion History</h1>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Every conversion is saved locally in SQLite, newest first.</p>
   </div>
   {% if entries %}
     <button hx-delete="/history" hx-target="#history-list" hx-swap="outerHTML"
