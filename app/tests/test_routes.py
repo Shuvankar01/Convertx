@@ -8,6 +8,27 @@ def test_dashboard(client):
     assert "ConvertX" in r.text
 
 
+def test_health_endpoint(client):
+    r = client.get("/health")
+    assert r.status_code == 200
+    assert r.json() == {"status": "healthy"}
+
+
+def test_footer_exposes_social_and_contact_links(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert "Designed &amp; Developed by Shuvankar Sahoo" in r.text
+    for href in (
+        "https://www.linkedin.com/in/shuvankarsahoo/",
+        "https://www.instagram.com/_mr._.shuvankar",
+        "mailto:shuvankar.sahoo.001@gmail.com",
+    ):
+        assert href in r.text, href
+    assert 'target="_blank"' in r.text
+    assert 'rel="noopener noreferrer"' in r.text
+    assert "Built with FastAPI · HTMX · Tailwind" not in r.text
+
+
 def test_converter_page(client):
     r = client.get("/converter")
     assert r.status_code == 200
