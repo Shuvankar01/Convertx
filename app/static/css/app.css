@@ -1,6 +1,37 @@
-/* Small polish on top of Tailwind. */
+/* ConvertX Pro — small polish layer on top of Tailwind. */
 :root { color-scheme: light dark; }
-html { -webkit-font-smoothing: antialiased; }
-::selection { background-color: rgba(59,130,246,0.25); }
-[hx-indicator] { transition: opacity .15s ease; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+::selection { background-color: rgba(59, 130, 246, 0.25); }
+
+/* Smooth height/opacity transitions for HTMX-driven regions. */
+#result-region { transition: opacity 0.2s ease; }
+#result-region > * { animation: cx-fade-in 0.25s ease both; }
+
+@keyframes cx-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* HTMX request indicators. */
+[hx-indicator] { transition: opacity 0.15s ease; }
 .htmx-request .htmx-indicator { opacity: 1; }
+.htmx-request .htmx-indicator.opacity-0 { opacity: 1; }
+
+/* Toast notifications. */
+.toast {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Swap icon rotates via Tailwind's rotate-180 utility with a smooth transition. */
+#swap-icon { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Nicer scrollbars on supporting browsers. */
+@media (pointer: fine) {
+  * { scrollbar-width: thin; scrollbar-color: rgba(100, 116, 139, 0.5) transparent; }
+}
