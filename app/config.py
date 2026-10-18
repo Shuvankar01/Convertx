@@ -46,7 +46,7 @@ def default_database_url() -> str:
 class Settings(BaseSettings):
     """Runtime configuration. Override via env vars prefixed with ``CONVERTX_``."""
 
-    app_name: str = "ConvertX"
+    app_name: str = "ConvertX Pro"
     tagline: str = "Smart Unit Converter for Everyday, Academic, and Technical Use"
     debug: bool = True
 

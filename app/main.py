@@ -35,6 +35,12 @@ def create_app() -> FastAPI:
     app.include_router(history.router)
     app.include_router(favorites.router)
     app.include_router(settings_router.router)
+
+    @app.get("/health", tags=["meta"])
+    def health() -> dict[str, str]:
+        """Liveness probe for container orchestrators and monitoring tools."""
+        return {"status": "healthy"}
+
     return app
 
 

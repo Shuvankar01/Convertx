@@ -4,6 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.converters.registry import all_categories, get_converter, units_for
 from app.core.enums import Category
 from app.db.session import get_db
@@ -21,13 +22,18 @@ def dashboard(
     db: Session = Depends(get_db),
     settings=Depends(app_settings),
 ):
-    history = HistoryService(db).recent(limit=6)
+    history_service = HistoryService(db)
+    history = history_service.recent(limit=6)
+    history_count = len(
+        history_service.recent(limit=get_settings().max_history_items)
+    )
     favorites = FavoriteService(db).list()[:6]
     return render(
         request,
         "pages/dashboard.html",
         settings=settings,
         history=history,
+        history_count=history_count,
         favorites=favorites,
         categories=all_categories(),
     )
