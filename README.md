@@ -441,7 +441,7 @@ are required** — ConvertX boots with built-in defaults.
 | Variable | Default | Purpose |
 |---|---|---|
 | `CONVERTX_DATABASE_URL` | local `convertx.db` (temp dir fallback) | SQLAlchemy database URL |
-| `CONVERTX_APP_NAME` | `ConvertX` | Application name shown in templates |
+| `CONVERTX_APP_NAME` | `ConvertX Pro` | Application name shown in templates |
 | `CONVERTX_TAGLINE` | *(see `app/config.py`)* | Tagline shown on the dashboard and About page |
 | `CONVERTX_MAX_HISTORY_ITEMS` | `200` | Maximum retained history rows |
 | `CONVERTX_DEFAULT_PRECISION` | `4` | Fallback precision setting |
